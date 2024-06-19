@@ -1,39 +1,57 @@
-
 <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h2>Contacts App</h2>
-        <button class="btn btn-primary mb-3" (click)="onSelect({ id: 0, firstName: '', lastName: '', email: '' })">Add New Contact</button>
-       
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let contact of contacts">
-              <td>{{ contact.id }}</td>
-              <td>{{ contact.firstName }}</td>
-              <td>{{ contact.lastName }}</td>
-              <td>{{ contact.email }}</td>
-              <td>
-                <button (click)="onSelect(contact)" class="btn btn-primary btn-sm">Edit</button>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Contacts App</h2>
+      <button class="btn btn-primary mb-3" (click)="onSelect({ id: 0, firstName: '', lastName: '', email: '' })">Add New Contact</button>
+
+      <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()">
+      </div>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th (click)="onSort('id')">ID</th>
+            <th (click)="onSort('firstName')">First Name</th>
+            <th (click)="onSort('lastName')">Last Name</th>
+            <th (click)="onSort('email')">Email</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contact of filteredContacts">
+            <td>{{ contact.id }}</td>
+            <td>{{ contact.firstName }}</td>
+            <td>{{ contact.lastName }}</td>
+            <td>{{ contact.email }}</td>
+            <td>
+              <button (click)="onSelect(contact)" class="btn btn-primary btn-sm">Edit</button>
             </td>
-            <td>  <button (click)="onDelete(contact); $event.stopPropagation()" class="btn btn-danger btn-sm">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="col-md-6" *ngIf="selectedContact">
-        <app-contact-form [contact]="selectedContact" (save)="onContactSaved($event)"></app-contact-form>
-      </div>
+            <td>
+              <button (click)="onDelete(contact); $event.stopPropagation()" class="btn btn-danger btn-sm">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <nav>
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="onPageChange(currentPage - 1)">Previous</a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="onPageChange(i + 1)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="onPageChange(currentPage + 1)">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="col-md-6" *ngIf="selectedContact">
+      <app-contact-form [contact]="selectedContact" (save)="onContactSaved($event)"></app-contact-form>
     </div>
   </div>
-  
+</div>
